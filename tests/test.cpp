@@ -29,6 +29,8 @@
   #include <random>
 #endif
 
+#include "flatbuffers/schemaless.h"
+
 using namespace MyGame::Example;
 
 #ifdef __ANDROID__
@@ -1194,6 +1196,30 @@ void ConformTest() {
   test_conform("enum E:byte { B, A }", "values differ for enum");
 }
 
+void SchemaLessTest() {
+  flatbuffers::SchemaLessBuilder slb;
+
+  // Write the equivalent of: [ 100, "Fred", 4.0 ]
+  auto v = slb.StartVector();
+  slb.Int(100);
+  slb.String("Fred");
+  slb.Float(4.0);
+  slb.EndVector(v);
+  slb.Finish();
+
+  for (size_t i = 0; i < slb.GetSize(); i++)
+    printf("%d ", slb.GetBufferPointer()[i]);
+  printf("\n");
+
+  auto vec = flatbuffers::GetSchemaLessRootAsVector(slb.GetBufferPointer());
+  TEST_EQ(vec.size(), 3);
+  TEST_EQ(vec.GetAsInt(0), 100);
+  TEST_EQ_STR(vec.GetAsString(1).c_str(), "Fred");
+  TEST_EQ(vec.GetAsFloat(2), 4.0);
+  TEST_EQ(vec.GetAsString(2).IsTheEmptyString(), true);  // Wrong Type.
+  TEST_EQ_STR(vec.GetAsString(2).c_str(), "");  // This still works though.
+}
+
 int main(int /*argc*/, const char * /*argv*/[]) {
   // Run our various test suites:
 
@@ -1228,6 +1254,8 @@ int main(int /*argc*/, const char * /*argv*/[]) {
   UnknownFieldsTest();
   ParseUnionTest();
   ConformTest();
+
+  SchemaLessTest();
 
   if (!testing_fails) {
     TEST_OUTPUT_LINE("ALL TESTS PASSED");

@@ -199,7 +199,8 @@ class SchemaLessBuilder FLATBUFFERS_FINAL_CLASS {
       switch (type_) {
         case SL_INT: {
           if (i_ < 0) {
-            assert(0);
+            assert(false);
+            return BIT_WIDTH_64;
           } else {
             return SchemaLessBuilder::Width(i_);
           }
@@ -209,7 +210,9 @@ class SchemaLessBuilder FLATBUFFERS_FINAL_CLASS {
           return bit_width_;
         case SL_STRING:
           return SchemaLessBuilder::Width(i_);  // FIXME: incorrect offset!
-        default: assert(0);
+        default:
+          assert(false);
+          return BIT_WIDTH_64;
       }
     }
   };

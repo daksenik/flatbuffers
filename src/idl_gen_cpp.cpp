@@ -1239,9 +1239,9 @@ class CppGenerator : public BaseGenerator {
               ") const { return ";
       code += GenUnderlyingCast(field, true, 
                            is_scalar || IsArray(field.value.type)
-                           ? "flatbuffers::EndianScalar(" + field.name + "_" +
-                             (IsArray(field.value.type) ? "[idx])" : ")")
-                           : field.name + "_");
+                            ? "flatbuffers::EndianScalar(" + field.name + "_" +
+                              (IsArray(field.value.type) ? "[idx])" : ")")
+                            : field.name + "_");
       code += "; }\n";
       if (IsArray(field.value.type)) {
         code += "  int16_t " + field.name + "_length() const { return ";

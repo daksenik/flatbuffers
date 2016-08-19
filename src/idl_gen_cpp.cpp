@@ -1233,11 +1233,14 @@ class CppGenerator : public BaseGenerator {
       auto &field = **it;
       GenComment(field.doc_comment, code_ptr, nullptr, "  ");
       auto is_scalar = IsScalar(field.value.type.base_type);
-      code += "  " + GenTypeGet(field.value.type, " ", "const ",
-                                IsArray(field.value.type) ? " *" : " &", true);
-      code += field.name + "() const { return ";
-      code += GenUnderlyingCast(field, true, is_scalar
-                           ? "flatbuffers::EndianScalar(" + field.name + "_)"
+      code += "  " + GenTypeGet(field.value.type, " ", "const "," &", true);
+      code += field.name + "(" +
+              (IsArray(field.value.type) ? "uint16_t idx" : "") +
+              ") const { return ";
+      code += GenUnderlyingCast(field, true, 
+                           is_scalar || IsArray(field.value.type)
+                           ? "flatbuffers::EndianScalar(" + field.name + "_" +
+                             (IsArray(field.value.type) ? "[idx])" : ")")
                            : field.name + "_");
       code += "; }\n";
       if (IsArray(field.value.type)) {
@@ -1245,17 +1248,20 @@ class CppGenerator : public BaseGenerator {
         code += NumToString(field.value.type.fixed_length) + "; }\n";
       }
       if (parser_.opts.mutable_buffer) {
-        if (is_scalar) {
+        if (is_scalar || IsArray(field.value.type)) {
           code += "  void mutate_" + field.name + "(";
-          code += GenTypeBasic(field.value.type, true);
+          if (IsArray(field.value.type)) code += "(uint16_t idx, ";
+          code += IsArray(field.value.type) ?
+                    GenTypeBasic(field.value.type.VectorType(), true) :
+                    GenTypeBasic(field.value.type, true);
           code += " _" + field.name + ") { flatbuffers::WriteScalar(&";
-          code += field.name + "_, ";
+          code += field.name + "_" + 
+                  (IsArray(field.value.type) ? "[idx]" : "") + ", ";
           code += GenUnderlyingCast(field, false, "_" + field.name);
           code += "); }\n";
         } else {
           code += "  ";
-          code += GenTypeGet(field.value.type, "", "", 
-                             IsArray(field.value.type) ? " *" : " &", true);
+          code += GenTypeGet(field.value.type, "", "", " &", true);
           code += "mutable_" + field.name + "() { return " + field.name;
           code += "_; }\n";
         }

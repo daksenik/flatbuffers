@@ -112,6 +112,9 @@ class BaseGenerator {
     return WrapInNameSpace(def.defined_namespace, def.name);
   }
 
+ public:
+  std::string error_;
+ protected:
   const Parser &parser_;
   const std::string &path_;
   const std::string &file_name_;

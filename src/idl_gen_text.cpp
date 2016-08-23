@@ -317,7 +317,8 @@ std::string TextFileName(const std::string &path,
 
 bool GenerateTextFile(const Parser &parser,
                       const std::string &path,
-                      const std::string &file_name) {
+                      const std::string &file_name,
+                      std::string &/*error_*/) {
   if (!parser.builder_.GetSize() || !parser.root_struct_def_) return true;
   std::string text;
   GenerateText(parser, parser.builder_.GetBufferPointer(), &text);

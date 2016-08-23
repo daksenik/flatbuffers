@@ -731,7 +731,10 @@ void GenStruct(StructDef &struct_def, std::string *code_ptr) {
        it != struct_def.fields.vec.end();
        ++it) {
     auto &field = **it;
-    assert(field.value.type.base_type != BASE_TYPE_ARRAY);
+    if (field.value.type.base_type == BASE_TYPE_ARRAY) {
+      error_ = "Fixed-length arrays are only available for C++.";
+      return;
+    }
     if (field.deprecated) continue;
     GenComment(field.doc_comment, code_ptr, &lang_.comment_config, "  ");
     std::string type_name = GenTypeGet(field.value.type);
@@ -1141,9 +1144,11 @@ void GenStruct(StructDef &struct_def, std::string *code_ptr) {
 }  // namespace general
 
 bool GenerateGeneral(const Parser &parser, const std::string &path,
-                     const std::string &file_name) {
+                     const std::string &file_name, std::string &error_) {
   general::GeneralGenerator generator(parser, path, file_name);
-  return generator.generate();
+  bool gen_result = generator.generate() && generator.error_.empty();
+  error_ = generator.error_;
+  return gen_result;
 }
 
 std::string GeneralMakeRule(const Parser &parser, const std::string &path,
@@ -1190,7 +1195,8 @@ std::string BinaryFileName(const Parser &parser,
 
 bool GenerateBinary(const Parser &parser,
                     const std::string &path,
-                    const std::string &file_name) {
+                    const std::string &file_name,
+                    std::string &/*error_*/) {
   return !parser.builder_.GetSize() ||
          flatbuffers::SaveFile(
            BinaryFileName(parser, path, file_name).c_str(),

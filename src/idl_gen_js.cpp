@@ -430,7 +430,10 @@ void GenStruct(const Parser &parser, StructDef &struct_def, std::string *code_pt
   for (auto it = struct_def.fields.vec.begin();
        it != struct_def.fields.vec.end(); ++it) {
     auto &field = **it;
-    assert(field.value.type.base_type != BASE_TYPE_ARRAY);
+    if (field.value.type.base_type == BASE_TYPE_ARRAY) {
+      error_ = "Fixed-length arrays are only available for C++.";
+      return;
+    }
     if (field.deprecated) continue;
     auto offset_prefix = "  var offset = this.bb.__offset(this.bb_pos, " +
       NumToString(field.value.offset) + ");\n  return offset ? ";
@@ -720,9 +723,11 @@ void GenStruct(const Parser &parser, StructDef &struct_def, std::string *code_pt
 }  // namespace js
 
 bool GenerateJS(const Parser &parser, const std::string &path,
-                const std::string &file_name) {
+                const std::string &file_name, std::string &error_) {
   js::JsGenerator generator(parser, path, file_name);
-  return generator.generate();
+  bool gen_result = generator.generate() && generator.error_.empty();
+  error_ = generator.error_;
+  return gen_result;
 }
 
 std::string JSMakeRule(const Parser &parser,

@@ -180,7 +180,8 @@ class FlatBufFile : public grpc_cpp_generator::File {
 
 bool GenerateGRPC(const Parser &parser,
                   const std::string &/*path*/,
-                  const std::string &file_name) {
+                  const std::string &file_name,
+                  std::string &/*error_*/) {
 
   int nservices = 0;
   for (auto it = parser.services_.vec.begin();

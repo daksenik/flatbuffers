@@ -809,7 +809,10 @@ namespace php {
       it != struct_def.fields.vec.end();
         ++it) {
         auto &field = **it;
-        assert(field.value.type.base_type != BASE_TYPE_ARRAY);
+        if (field.value.type.base_type == BASE_TYPE_ARRAY) {
+          error_ = "Fixed-length arrays are only available for C++.";
+          return;
+        }
         if (field.deprecated) continue;
 
         GenStructAccessor(struct_def, field, code_ptr);
@@ -961,8 +964,10 @@ namespace php {
     }  // namespace php
 
     bool GeneratePhp(const Parser &parser, const std::string &path,
-                     const std::string &file_name) {
+                     const std::string &file_name, std::string &error_) {
       php::PhpGenerator generator(parser, path, file_name);
-      return generator.generate();
+      bool gen_result = generator.generate() && generator.error_.empty();
+      error_ = generator.error_;
+      return gen_result;
     }
     }  // namespace flatbuffers

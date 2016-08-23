@@ -579,41 +579,6 @@ static void GenTableBuilders(const StructDef &struct_def,
   GetEndOffsetOnTable(struct_def, code_ptr);
 }
 
-// Generate struct or table methods.
-static void GenStruct(const StructDef &struct_def,
-                      std::string *code_ptr) {
-  if (struct_def.generated) return;
-
-  GenComment(struct_def.doc_comment, code_ptr, nullptr);
-  BeginClass(struct_def, code_ptr);
-  if (!struct_def.fixed) {
-    // Generate a special accessor for the table that has been declared as
-    // the root type.
-    NewRootTypeFromBuffer(struct_def, code_ptr);
-  }
-  // Generate the Init method that sets the field in a pre-existing
-  // accessor object. This is to allow object reuse.
-  InitializeExisting(struct_def, code_ptr);
-  for (auto it = struct_def.fields.vec.begin();
-       it != struct_def.fields.vec.end();
-       ++it) {
-    auto &field = **it;
-    assert(field.value.type.base_type != BASE_TYPE_ARRAY);
-    if (field.deprecated) continue;
-
-    GenStructAccessor(struct_def, field, code_ptr);
-    GenStructMutator(struct_def, field, code_ptr);
-  }
-
-  if (struct_def.fixed) {
-    // create a struct constructor function
-    GenStructBuilder(struct_def, code_ptr);
-  } else {
-    // Create a set of functions that allow table construction.
-    GenTableBuilders(struct_def, code_ptr);
-  }
-}
-
 // Generate enum declarations.
 static void GenEnum(const EnumDef &enum_def, std::string *code_ptr) {
   if (enum_def.generated) return;
@@ -720,7 +685,7 @@ class GoGenerator : public BaseGenerator {
     for (auto it = parser_.structs_.vec.begin();
          it != parser_.structs_.vec.end(); ++it) {
       std::string declcode;
-      go::GenStruct(**it, &declcode);
+      GenStruct(**it, &declcode);
       if (!SaveType(**it, declcode, true)) return false;
     }
 
@@ -753,13 +718,54 @@ class GoGenerator : public BaseGenerator {
         NamespaceDir(*def.defined_namespace) + def.name + ".go";
     return SaveFile(filename.c_str(), code, false);
   }
+
+  // Generate struct or table methods.
+  void GenStruct(const StructDef &struct_def,
+    std::string *code_ptr) {
+    if (struct_def.generated) return;
+
+    GenComment(struct_def.doc_comment, code_ptr, nullptr);
+    BeginClass(struct_def, code_ptr);
+    if (!struct_def.fixed) {
+      // Generate a special accessor for the table that has been declared as
+      // the root type.
+      NewRootTypeFromBuffer(struct_def, code_ptr);
+    }
+    // Generate the Init method that sets the field in a pre-existing
+    // accessor object. This is to allow object reuse.
+    InitializeExisting(struct_def, code_ptr);
+    for (auto it = struct_def.fields.vec.begin();
+    it != struct_def.fields.vec.end();
+      ++it) {
+      auto &field = **it;
+      if (field.value.type.base_type == BASE_TYPE_ARRAY) {
+        error_ = "Fixed-length arrays are only available for C++.";
+        return;
+      }
+      if (field.deprecated) continue;
+
+      GenStructAccessor(struct_def, field, code_ptr);
+      GenStructMutator(struct_def, field, code_ptr);
+    }
+
+    if (struct_def.fixed) {
+      // create a struct constructor function
+      GenStructBuilder(struct_def, code_ptr);
+    }
+    else {
+      // Create a set of functions that allow table construction.
+      GenTableBuilders(struct_def, code_ptr);
+    }
+  }
 };
 }  // namespace go
 
 bool GenerateGo(const Parser &parser, const std::string &path,
-                const std::string &file_name) {
+                const std::string &file_name, std::string &error_) {
   go::GoGenerator generator(parser, path, file_name);
-  return generator.generate();
+  bool gen_result = generator.generate() && generator.error_.empty();
+  error_ = generator.error_;
+  return gen_result;
 }
 
 }  // namespace flatbuffers

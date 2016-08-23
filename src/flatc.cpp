@@ -29,7 +29,8 @@ static void Error(const std::string &err, bool usage = false,
 struct Generator {
   bool (*generate)(const flatbuffers::Parser &parser,
                    const std::string &path,
-                   const std::string &file_name);
+                   const std::string &file_name,
+                   std::string &error_);
   const char *generator_opt_short;
   const char *generator_opt_long;
   const char *lang_name;
@@ -336,11 +337,12 @@ int main(int argc, const char *argv[]) {
         if (generator_enabled[i]) {
           if (!print_make_rules) {
             flatbuffers::EnsureDirExists(output_path);
-            if (!generators[i].generate(*g_parser, output_path, filebase)) {
+            std::string error_;
+            if (!generators[i].generate(*g_parser, output_path, filebase, error_)) {
               Error(std::string("Unable to generate ") +
                     generators[i].lang_name +
                     " for " +
-                    filebase);
+                    filebase + (error_.empty() ? "" : ":"+error_));
             }
           } else {
             std::string make_rule = generators[i].make_rule(

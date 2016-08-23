@@ -612,14 +612,16 @@ extern void GenerateText(const Parser &parser,
                          std::string *text);
 extern bool GenerateTextFile(const Parser &parser,
                              const std::string &path,
-                             const std::string &file_name);
+                             const std::string &file_name,
+                             std::string &error_);
 
 // Generate binary files from a given FlatBuffer, and a given Parser
 // object that has been populated with the corresponding schema.
 // See idl_gen_general.cpp.
 extern bool GenerateBinary(const Parser &parser,
                            const std::string &path,
-                           const std::string &file_name);
+                           const std::string &file_name,
+                           std::string &error);
 
 // Generate a C++ header from the definitions in the Parser object.
 // See idl_gen_cpp.
@@ -627,20 +629,23 @@ extern std::string GenerateCPP(const Parser &parser,
                                const std::string &include_guard_ident);
 extern bool GenerateCPP(const Parser &parser,
                         const std::string &path,
-                        const std::string &file_name);
+                        const std::string &file_name,
+                        std::string &error_);
 
 // Generate JavaScript code from the definitions in the Parser object.
 // See idl_gen_js.
 extern std::string GenerateJS(const Parser &parser);
 extern bool GenerateJS(const Parser &parser,
                        const std::string &path,
-                       const std::string &file_name);
+                       const std::string &file_name,
+                       std::string &error_);
 
 // Generate Go files from the definitions in the Parser object.
 // See idl_gen_go.cpp.
 extern bool GenerateGo(const Parser &parser,
                        const std::string &path,
-                       const std::string &file_name);
+                       const std::string &file_name,
+                       std::string &error_);
 
 // Generate Java files from the definitions in the Parser object.
 // See idl_gen_java.cpp.
@@ -652,13 +657,15 @@ extern bool GenerateJava(const Parser &parser,
 // See idl_gen_php.
 extern bool GeneratePhp(const Parser &parser,
        const std::string &path,
-       const std::string &file_name);
+       const std::string &file_name,
+       std::string &error_);
 
 // Generate Python files from the definitions in the Parser object.
 // See idl_gen_python.cpp.
 extern bool GeneratePython(const Parser &parser,
                            const std::string &path,
-                           const std::string &file_name);
+                           const std::string &file_name,
+                           std::string &error_);
 
 // Generate C# files from the definitions in the Parser object.
 // See idl_gen_csharp.cpp.
@@ -670,7 +677,8 @@ extern bool GenerateCSharp(const Parser &parser,
 // See idl_gen_general.cpp.
 extern bool GenerateGeneral(const Parser &parser,
                             const std::string &path,
-                            const std::string &file_name);
+                            const std::string &file_name,
+                            std::string &error_);
 
 // Generate a schema file from the internal representation, useful after
 // parsing a .proto schema.
@@ -714,7 +722,8 @@ extern std::string BinaryMakeRule(const Parser &parser,
 // See idl_gen_grpc.cpp.
 bool GenerateGRPC(const Parser &parser,
                   const std::string &path,
-                  const std::string &file_name);
+                  const std::string &file_name,
+                  std::string &error_);
 
 }  // namespace flatbuffers
 

@@ -28,9 +28,9 @@ MANUALLY_ALIGNED_STRUCT(4) ArrayStruct FLATBUFFERS_FINAL_CLASS {
 
   float a() const { return flatbuffers::EndianScalar(a_); }
   void mutate_a(float _a) { flatbuffers::WriteScalar(&a_, _a); }
-  const int32_t *b() const { return b_; }
+  int32_t b(uint16_t idx) const { return flatbuffers::EndianScalar(b_[idx]); }
   int16_t b_length() const { return 15; }
-  int32_t *mutable_b() { return b_; }
+  void mutate_b(uint16_t idx, int32_t _b) { flatbuffers::WriteScalar(&b_[idx], _b); }
   int8_t c() const { return flatbuffers::EndianScalar(c_); }
   void mutate_c(int8_t _c) { flatbuffers::WriteScalar(&c_, _c); }
 };

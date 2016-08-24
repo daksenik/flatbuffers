@@ -1213,12 +1213,12 @@ void FixedLengthArrayTest() {
   fbb.Finish(aTable);
   auto p = ArraysTest::Test1::GetMutableArrayTable(fbb.GetBufferPointer());
   auto mArStruct = p->mutable_a();
-  mArStruct->mutable_b()[14] = -14;
+  mArStruct->mutate_b(0, -14);
   TEST_EQ(mArStruct->a(), 2);
   TEST_EQ(mArStruct->b_length(), 15);
   TEST_EQ(mArStruct->c(), 12);
-  TEST_EQ(mArStruct->b()[14], -14);
-  for (int i = 0; i < 14; i++) TEST_EQ(mArStruct->b()[i], i + 1);
+  TEST_EQ(mArStruct->b(0), -14);
+  for (int i = 1; i <= 14; i++) TEST_EQ(mArStruct->b(i), i + 1);
 }
 
 int main(int /*argc*/, const char * /*argv*/[]) {

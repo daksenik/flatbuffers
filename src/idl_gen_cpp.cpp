@@ -1233,7 +1233,9 @@ class CppGenerator : public BaseGenerator {
       auto &field = **it;
       GenComment(field.doc_comment, code_ptr, nullptr, "  ");
       auto is_scalar = IsScalar(field.value.type.base_type);
-      code += "  " + GenTypeGet(field.value.type, " ", "const "," &", true);
+      code += "  " + GenTypeGet(IsArray(field.value.type) ?
+                       field.value.type.VectorType() :
+                       field.value.type, " ", "const "," &", true);
       code += field.name + "(" +
               (IsArray(field.value.type) ? "uint16_t idx" : "") +
               ") const { return ";
@@ -1250,7 +1252,7 @@ class CppGenerator : public BaseGenerator {
       if (parser_.opts.mutable_buffer) {
         if (is_scalar || IsArray(field.value.type)) {
           code += "  void mutate_" + field.name + "(";
-          if (IsArray(field.value.type)) code += "(uint16_t idx, ";
+          if (IsArray(field.value.type)) code += "uint16_t idx, ";
           code += IsArray(field.value.type) ?
                     GenTypeBasic(field.value.type.VectorType(), true) :
                     GenTypeBasic(field.value.type, true);

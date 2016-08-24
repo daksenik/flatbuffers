@@ -569,7 +569,7 @@ CheckedError Parser::ParseType(Type &type) {
         int64_t fixed_length = StringToInt(attribute_.c_str());
         if (fixed_length < 1 || fixed_length > 0x800) {
           return Error(
-                "length of fixed-length array must be positive and fit to short type.");
+                "length of fixed-length array must be between 1 and 2048.");
         }
         type = Type(BASE_TYPE_ARRAY, subtype.struct_def, 
                     subtype.enum_def, (int16_t)fixed_length);

@@ -1208,10 +1208,10 @@ void FixedLengthArrayTest() {
   flatbuffers::FlatBufferBuilder fbb;
   int array[15];
   for (int i = 0; i < 15; i++) array[i] = i + 1;
-  ArraysTest::Test1::ArrayStruct aStruct(2, array, 12);
-  auto aTable = ArraysTest::Test1::CreateArrayTable(fbb, &aStruct);
+  MyGame::Example::ArrayStruct aStruct(2, array, 12);
+  auto aTable = MyGame::Example::CreateArrayTable(fbb, &aStruct);
   fbb.Finish(aTable);
-  auto p = ArraysTest::Test1::GetMutableArrayTable(fbb.GetBufferPointer());
+  auto p = MyGame::Example::GetMutableArrayTable(fbb.GetBufferPointer());
   auto mArStruct = p->mutable_a();
   mArStruct->mutate_b(0, -14);
   TEST_EQ(mArStruct->a(), 2);

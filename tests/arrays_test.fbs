@@ -1,4 +1,4 @@
-namespace ArraysTest.Test1;
+namespace MyGame.Example;
 
 struct ArrayStruct{
 	a:float;

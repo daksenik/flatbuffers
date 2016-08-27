@@ -47,13 +47,14 @@ namespace flatbuffers {
   TD(LONG,   "long",   int64_t,  long,   int64,   long,   int64) \
   TD(ULONG,  "ulong",  uint64_t, long,   uint64,  ulong,  uint64) /* end int */ \
   TD(FLOAT,  "float",  float,    float,  float32, float,  float32) /* begin float */ \
-  TD(DOUBLE, "double", double,   double, float64, double, float64) /* end float/scalar */ \
-  TD(ARRAY,  "",       int,      int,    int,     int,    int)
+  TD(DOUBLE, "double", double,   double, float64, double, float64) /* end float/scalar */
 #define FLATBUFFERS_GEN_TYPES_POINTER(TD) \
   TD(STRING, "string", Offset<void>, int, int, StringOffset, int) \
   TD(VECTOR, "",       Offset<void>, int, int, VectorOffset, int) \
   TD(STRUCT, "",       Offset<void>, int, int, int, int) \
   TD(UNION,  "",       Offset<void>, int, int, int, int)
+#define FLATBUFFERS_GEN_TYPES_ARRAY(TD) \
+  TD(ARRAY,  "",       int,      int,    int,     int,    int)
 
 // The fields are:
 // - enum
@@ -78,7 +79,8 @@ switch (type) {
 
 #define FLATBUFFERS_GEN_TYPES(TD) \
         FLATBUFFERS_GEN_TYPES_SCALAR(TD) \
-        FLATBUFFERS_GEN_TYPES_POINTER(TD)
+        FLATBUFFERS_GEN_TYPES_POINTER(TD) \
+        FLATBUFFERS_GEN_TYPES_ARRAY(TD)
 
 // Create an enum for all the types above.
 #ifdef __GNUC__

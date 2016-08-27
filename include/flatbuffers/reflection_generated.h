@@ -35,15 +35,15 @@ enum BaseType {
   ULong = 10,
   Float = 11,
   Double = 12,
-  Array = 13,
-  String = 14,
-  Vector = 15,
-  Obj = 16,
-  Union = 17,
+  String = 13,
+  Vector = 14,
+  Obj = 15,
+  Union = 16,
+  Array = 17,
 };
 
 inline const char **EnumNamesBaseType() {
-  static const char *names[] = { "None", "UType", "Bool", "Byte", "UByte", "Short", "UShort", "Int", "UInt", "Long", "ULong", "Float", "Double", "Array", "String", "Vector", "Obj", "Union", nullptr };
+  static const char *names[] = { "None", "UType", "Bool", "Byte", "UByte", "Short", "UShort", "Int", "UInt", "Long", "ULong", "Float", "Double", "String", "Vector", "Obj", "Union", "Array", nullptr };
   return names;
 }
 

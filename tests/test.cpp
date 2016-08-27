@@ -749,7 +749,7 @@ void FuzzTest2() {
       AddToSchemaAndInstances(("  " + field_name + ":").c_str(),
                               deprecated ? "" : (field_name + ": ").c_str());
       // Pick random type:
-      int base_type = lcg_rand() % (flatbuffers::BASE_TYPE_UNION + 1);
+      int base_type = lcg_rand() % (flatbuffers::BASE_TYPE_ARRAY + 1);
       switch (base_type) {
         case flatbuffers::BASE_TYPE_ARRAY:
           if (!is_struct) {

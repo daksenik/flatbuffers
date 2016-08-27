@@ -298,6 +298,7 @@ static bool GenStruct(const StructDef &struct_def, const Table *table,
                 } \
                 break;
             FLATBUFFERS_GEN_TYPES_SCALAR(FLATBUFFERS_TD)
+            FLATBUFFERS_GEN_TYPES_ARRAY(FLATBUFFERS_TD)
           #undef FLATBUFFERS_TD
           // Generate drop-thru case statements for all pointer types:
           #define FLATBUFFERS_TD(ENUM, IDLTYPE, CTYPE, JTYPE, GTYPE, NTYPE, \

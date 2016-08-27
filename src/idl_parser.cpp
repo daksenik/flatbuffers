@@ -907,6 +907,7 @@ CheckedError Parser::ParseTable(const StructDef &struct_def, std::string *value,
               } \
               break;
             FLATBUFFERS_GEN_TYPES_SCALAR(FLATBUFFERS_TD);
+            FLATBUFFERS_GEN_TYPES_ARRAY(FLATBUFFERS_TD);
           #undef FLATBUFFERS_TD
           #define FLATBUFFERS_TD(ENUM, IDLTYPE, CTYPE, JTYPE, GTYPE, NTYPE, \
             PTYPE) \

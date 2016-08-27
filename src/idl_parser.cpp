@@ -2136,9 +2136,9 @@ Offset<reflection::Type> Type::Serialize(FlatBufferBuilder *builder) const {
   return reflection::CreateType(*builder,
                                 static_cast<reflection::BaseType>(base_type),
                                 static_cast<reflection::BaseType>(element),
-                                fixed_length,
                                 struct_def ? struct_def->index :
-                                             (enum_def ? enum_def->index : -1));
+                                             (enum_def ? enum_def->index : -1),
+                                fixed_length);
 }
 
 flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<

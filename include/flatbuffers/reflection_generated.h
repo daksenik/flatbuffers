@@ -39,7 +39,7 @@ enum BaseType {
   String = 14,
   Vector = 15,
   Obj = 16,
-  Union = 17
+  Union = 17,
 };
 
 inline const char **EnumNamesBaseType() {
@@ -53,19 +53,19 @@ struct Type FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
     VT_BASE_TYPE = 4,
     VT_ELEMENT = 6,
-    VT_FIXED_LENGTH = 8,
-    VT_INDEX = 10
+    VT_INDEX = 8,
+    VT_FIXED_LENGTH = 10
   };
   BaseType base_type() const { return static_cast<BaseType>(GetField<int8_t>(VT_BASE_TYPE, 0)); }
   BaseType element() const { return static_cast<BaseType>(GetField<int8_t>(VT_ELEMENT, 0)); }
-  int16_t fixed_length() const { return GetField<int16_t>(VT_FIXED_LENGTH, 0); }
   int32_t index() const { return GetField<int32_t>(VT_INDEX, -1); }
+  int16_t fixed_length() const { return GetField<int16_t>(VT_FIXED_LENGTH, 0); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int8_t>(verifier, VT_BASE_TYPE) &&
            VerifyField<int8_t>(verifier, VT_ELEMENT) &&
-           VerifyField<int16_t>(verifier, VT_FIXED_LENGTH) &&
            VerifyField<int32_t>(verifier, VT_INDEX) &&
+           VerifyField<int16_t>(verifier, VT_FIXED_LENGTH) &&
            verifier.EndTable();
   }
 };
@@ -75,8 +75,8 @@ struct TypeBuilder {
   flatbuffers::uoffset_t start_;
   void add_base_type(BaseType base_type) { fbb_.AddElement<int8_t>(Type::VT_BASE_TYPE, static_cast<int8_t>(base_type), 0); }
   void add_element(BaseType element) { fbb_.AddElement<int8_t>(Type::VT_ELEMENT, static_cast<int8_t>(element), 0); }
-  void add_fixed_length(int16_t fixed_length) { fbb_.AddElement<int16_t>(Type::VT_FIXED_LENGTH, fixed_length, 0); }
   void add_index(int32_t index) { fbb_.AddElement<int32_t>(Type::VT_INDEX, index, -1); }
+  void add_fixed_length(int16_t fixed_length) { fbb_.AddElement<int16_t>(Type::VT_FIXED_LENGTH, fixed_length, 0); }
   TypeBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   TypeBuilder &operator=(const TypeBuilder &);
   flatbuffers::Offset<Type> Finish() {
@@ -88,8 +88,8 @@ struct TypeBuilder {
 inline flatbuffers::Offset<Type> CreateType(flatbuffers::FlatBufferBuilder &_fbb,
     BaseType base_type = None,
     BaseType element = None,
-    int16_t fixed_length = 0,
-    int32_t index = -1) {
+    int32_t index = -1,
+    int16_t fixed_length = 0) {
   TypeBuilder builder_(_fbb);
   builder_.add_index(index);
   builder_.add_fixed_length(fixed_length);
